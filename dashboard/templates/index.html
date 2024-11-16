@@ -8,14 +8,14 @@
 <body>
     <h1>Nightscout Dashboard</h1>
     
-    <h2>data</h2>
+    <h2>داده‌های قند خون</h2>
     <ul>
         {% for entry in data %}
             <li>{{ entry.dateString }}: {{ entry.sgv }} mg/dL</li>
         {% endfor %}
     </ul>
 
-    <h2>prediction</h2>
-    <p>prediction: {{ prediction[0] }} mg/dL</p>
+    <h2>پیش‌بینی سطح قند خون</h2>
+    <p>پیش‌بینی برای زمان خاص: {{ prediction[0] }} mg/dL</p>
 </body>
 </html>
