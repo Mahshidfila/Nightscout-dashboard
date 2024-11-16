@@ -9,16 +9,11 @@
 2. وابستگی‌ها را نصب کنید:
 pip install -r requirements.txt
 
-markdown
-Copy code
 
 ## استفاده
 
 1. برای اجرای داشبورد:
 python dashboard/app.py
-
-markdown
-Copy code
 
 2. از طریق مرورگر به آدرس `http://localhost:5000` بروید.
 
