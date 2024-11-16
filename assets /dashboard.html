@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>داشبورد قند خون</title>
+    <script src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.16.1"></script> 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            direction: rtl;
+            padding: 20px;
+            background-color: #f4f4f9;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .section {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .section-title {
+            font-size: 20px;
+            color: #444;
+        }
+        .alert {
+            background-color: #ffcccc;
+            padding: 10px;
+            border: 1px solid #ff0000;
+            color: #ff0000;
+            margin-top: 20px;
+            display: none;
+        }
+        .data-section {
+            display: flex;
+            justify-content: space-between;
+        }
+        .data-item {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            margin: 5px;
+            background-color: #e1f5fe;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>داشبورد قند خون</h1>
+
+    <div class="alert" id="glucose-alert">
+        قند خون شما بالا است! لطفاً اقدامات لازم را انجام دهید.
+    </div>
+
+    <div class="section">
+        <h2 class="section-title">داده‌های به‌روز قند خون</h2>
+        <div class="data-section">
+            <div class="data-item" id="glucose-level">در حال بارگذاری...</div>
+            <div class="data-item" id="glucose-trend">روند قند خون: در حال بارگذاری...</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2 class="section-title">نمودار قند خون در طول زمان</h2>
+        <div id="glucose-chart"></div>
+    </div>
+
+    <div class="section">
+        <h2 class="section-title">پیش‌بینی قند خون</h2>
+        <div id="prediction-chart"></div>
+    </div>
+
+    <script>
+        function fetchGlucoseLevel() {
+            $.get('/api/glucose', function(data) {
+                $('#glucose-level').text("قند خون شما: " + data.level + " mg/dL");
+
+                if (data.level > 180) {
+                    $('#glucose-alert').show();
+                } else {
+                    $('#glucose-alert').hide();
+                }
+
+                $('#glucose-trend').text("روند: " + (data.level > 120 ? "بالا" : "عادی"));
+            });
+        }
+
+        function loadGlucoseChart() {
+            $.get('/api/glucose_data', function(data) {
+                var trace = {
+                    x: data.times,
+                    y: data.levels,
+                    type: 'scatter',
+                    mode: 'lines+markers',
+                    name: 'قند خون'
+                };
+
+                var layout = {
+                    title: 'قند خون در طول زمان',
+                    xaxis: { title: 'زمان' },
+                    yaxis: { title: 'مقدار قند خون (mg/dL)' }
+                };
+
+                Plotly.newPlot('glucose-chart', [trace], layout);
+            });
+        }
+
+        function loadPredictionChart() {
+            $.get('/api/prediction', function(data) {
+                var trace = {
+                    x: data.times,
+                    y: data.predictions,
+                    type: 'scatter',
+                    mode: 'lines+markers',
+                    name: 'پیش‌بینی قند خون'
+                };
+
+                var layout = {
+                    title: 'پیش‌بینی قند خون',
+                    xaxis: { title: 'زمان' },
+                    yaxis: { title: 'مقدار قند خون (mg/dL)' }
+                };
+
+                Plotly.newPlot('prediction-chart', [trace], layout);
+            });
+        }
+
+        fetchGlucoseLevel();
+        loadGlucoseChart();
+        loadPredictionChart();
+
+        setInterval(function() {
+            fetchGlucoseLevel();
+            loadGlucoseChart();
+            loadPredictionChart();
+        }, 5000);  
+    </script>
+
+</body>
+</html>
