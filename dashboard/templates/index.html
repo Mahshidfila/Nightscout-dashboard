@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nightscout Dashboard</title>
+</head>
+<body>
+    <h1>Nightscout Dashboard</h1>
+    
+    <h2>data</h2>
+    <ul>
+        {% for entry in data %}
+            <li>{{ entry.dateString }}: {{ entry.sgv }} mg/dL</li>
+        {% endfor %}
+    </ul>
+
+    <h2>prediction</h2>
+    <p>prediction: {{ prediction[0] }} mg/dL</p>
+</body>
+</html>
